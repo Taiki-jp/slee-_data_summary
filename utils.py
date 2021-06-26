@@ -7,6 +7,10 @@ from dataclasses import dataclass
 from py_color import PyColor
 import pandas as pd
 
+# make sleep stage graph
+def make_ss_graph(input_dirname : str,
+                  output_dirname : str) -> None:
+    
 # from folder name(which is specified in csv), does folder name exit or not
 def folder_exists(csv_file : str) -> None:
     root_dir = os.path.join("c:/users/taiki/Desktop/adding_sleep_datas")
@@ -78,6 +82,12 @@ def catch_csv(target_dir : str) -> bool:
             return True
     return False
 
+# 
+def write2csv(csv_file : str, added_dict : dict) -> None:
+    df = pd.DataFrame(added_dict)
+    df.to_csv(csv_file)
+    return
+
 # aboarting list class
 @dataclass
 class AboartingList:
@@ -86,7 +96,8 @@ class AboartingList:
         "xlsx",
         "csv",
         "未整理",
-        "140421_KINJYO"
+        "140421_KINJYO",
+        "figures"
     ]
 
 if __name__ == "__main__":
@@ -95,16 +106,27 @@ if __name__ == "__main__":
     counter = 0
     target_folders_list = abandon_folders(target_folders=folders,
                                           aboarting_list=aboarter.ignoring_file_in_emoor_sleep_data_list)
+    has_ssf_list = list()
+    dirname_list = list()
     for target_dir in target_folders_list:
         has_ssf = catch_csv(target_dir=target_dir)
         _, dir_name = os.path.split(target_dir)
+        dirname_list.append(dir_name)
         if has_ssf:
             counter += 1
             print(PyColor.GREEN,
                   f"*** {dir_name} has csv file under alice folder ***",
                   PyColor.END)
+            has_ssf_list.append(True)
         else:
             print(PyColor.RED,
                   f"*** {dir_name} does not have csv file under alice folder ***",
                   PyColor.END)
+            has_ssf_list.append(False)
     print(counter)
+    # FIXME : 色々な場所で定義されているから固める
+    csv_file = os.path.join("c:/users/taiki/desktop/adding_sleep_datas/summary.csv")
+    has_ssf_dict = {"dir_name":dirname_list,
+                    "has_csv_under_alice":has_ssf_list}
+    # write into summary.csv
+    write2csv(csv_file=csv_file, added_dict = has_ssf_dict)
