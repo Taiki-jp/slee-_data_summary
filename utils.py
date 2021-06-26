@@ -5,10 +5,27 @@ import glob as glob
 import sys, os
 from dataclasses import dataclass
 from py_color import PyColor
+import pandas as pd
+
+# from folder name(which is specified in csv), does folder name exit or not
+def folder_exists(csv_file : str) -> None:
+    root_dir = os.path.join("c:/users/taiki/Desktop/adding_sleep_datas")
+    df = pd.read_csv(csv_file, header=0)
+    subjetcts_list = df["subjects_date_and_name"]
+    for subject in subjetcts_list:
+        if os.path.exists(os.path.join(root_dir,
+                                       subject)):
+            print(PyColor.GREEN,
+                  f"{subject} exists!",
+                  PyColor.END)
+        else:
+            print(PyColor.RED,
+                  f"{subject} does not exist",
+                  PyColor.END)
 
 # return root dir which is targeted
 def return_target_folders() -> list:
-    root_dir = os.path.join("\\\gamma", "SleepData", "EMOOR_sleepData")  # NOTE : network server need \\
+    root_dir = os.path.join("c:/users/taiki/Desktop/adding_sleep_datas")  # NOTE : network server need \\
     # show root dir if there is not directory
     if not os.path.exists(root_dir):
         print(f"{root_dir} does not exist")
@@ -85,5 +102,9 @@ if __name__ == "__main__":
             counter += 1
             print(PyColor.GREEN,
                   f"*** {dir_name} has csv file under alice folder ***",
+                  PyColor.END)
+        else:
+            print(PyColor.RED,
+                  f"*** {dir_name} does not have csv file under alice folder ***",
                   PyColor.END)
     print(counter)
